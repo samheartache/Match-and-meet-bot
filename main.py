@@ -5,7 +5,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-from register_handlers import router
+from handlers import commands, profile_handlers
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -15,16 +15,18 @@ dispatcher = Dispatcher()
 
 
 async def main():
-    dispatcher.include_router(router=router)
+    dispatcher.include_routers(
+        commands.router,
+        profile_handlers.router
+    )
     await bot.delete_webhook(drop_pending_updates=True)
     await dispatcher.start_polling(bot)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    
+
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot's work was stopped manually")
-

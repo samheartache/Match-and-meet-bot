@@ -9,3 +9,4 @@ class Register(StatesGroup):
     description = State()
     photo = State()
     city = State()
+    end_reg = State()
