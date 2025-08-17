@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
 engine = create_async_engine(url=settings.url)
-
 async_session = async_sessionmaker(engine)
+
+
