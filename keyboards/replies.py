@@ -16,4 +16,4 @@ profile_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='🏙️ Изменить город'), KeyboardButton(text='📄 Изменить описание')],
     [KeyboardButton(text='📝 Заполнить анкету заново')],
     [KeyboardButton(text='Назад в меню')]
-])
+], resize_keyboard=True, one_time_keyboard=True)
