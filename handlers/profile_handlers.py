@@ -7,7 +7,6 @@ import messages
 import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
 from states import Register
-from handlers.commands import menu, edit_profile
 
 router = Router()
 
@@ -94,27 +93,20 @@ async def handle_photo(message: Message, state: FSMContext):
         photo = message.photo[-1].file_id
         await state.update_data(photo=photo)
         data = await state.get_data()
-        await send_profile(message=message, state=state, data=data)
-        await message.answer(text=messages.FINISH_REGISTER)
+        await send_profile(message=message, state=state, data=data, after_register=True)
+        await message.answer(text=messages.FINISH_REGISTER, reply_markup=kb_r.menu_keyboard)
         return
     else:
         await message.answer('Отправьте фото корректно')
         return
 
-
-async def send_profile(message: Message, state: FSMContext, data):
+@router.message(F.text == '👤 Моя анкета')
+async def send_profile(message: Message, state: FSMContext, data, after_register=False):
     await message.answer('Вот ваша анкета: ')
-    await message.answer_photo(photo=data['photo'],
-                               caption=f'{data['name']}, {data['age']}, {data['city']}\n\n{data['description']}')
-
-
-@router.callback_query(F.data == 'correct')
-async def correct_profile(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await menu(message=callback.message)
-
-
-@router.callback_query(F.data == 'edit_profile')
-async def edit_profile_callback(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await edit_profile(message=callback.message)
+    if not after_register:
+        await message.answer_photo(photo=data['photo'],
+                                caption=f'{data['name']}, {data['age']}, {data['city']}\n\n{data['description']}')
+    else:
+        await message.answer_photo(photo=data['photo'],
+                                caption=f'{data['name']}, {data['age']}, {data['city']}\n\n{data['description']}', \
+                                    reply_markup=kb_r.profile_keyboard)

@@ -2,7 +2,6 @@ from aiogram.types import BotCommand
 
 BOT_COMMANDS = [
     BotCommand(command='start', description='Регистрация'),
-    BotCommand(command='menu', description='Меню бота'),
     BotCommand(command='profile', description='Моя анкета'),
     BotCommand(command='editprofile', description='Редактировать анкету'),
     BotCommand(command='search', description='Искать анкеты'),
