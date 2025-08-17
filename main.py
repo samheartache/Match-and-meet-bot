@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 
 from handlers import commands, profile_handlers
+from utils import BOT_COMMANDS
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -19,6 +20,7 @@ async def main():
         commands.router,
         profile_handlers.router
     )
+    await bot.set_my_commands(BOT_COMMANDS)
     await bot.delete_webhook(drop_pending_updates=True)
     await dispatcher.start_polling(bot)
 

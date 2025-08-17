@@ -1,6 +1,22 @@
+from aiogram.types import BotCommand
+
+BOT_COMMANDS = [
+    BotCommand(command='start', description='Регистрация'),
+    BotCommand(command='menu', description='Меню бота'),
+    BotCommand(command='profile', description='Моя анкета'),
+    BotCommand(command='editprofile', description='Редактировать анкету'),
+    BotCommand(command='search', description='Искать анкеты'),
+    BotCommand(command='likes', description='Кто меня оценил?'),
+    BotCommand(command='contacts', description='Контакты бота'),
+    BotCommand(command='deleteprofile', description='Удалить анкету'),
+]
+
+
 def welcome_greet(name):
     return f'Привет, {name}. \nДобро пожаловать в бот для знакомтсв. \nДля того чтобы пользоваться ботом, необходимо создать свою анкету.'
 
-
-EDIT_CHOICES = '1. Заполнить анкету заново\n2. Изменить имя\n3. Изменить возраст\n4. Изменить город\n5. Изменить описание\n6. Изменить фото\n7. На главную'
-MENU_CHOICES = '1. Искать анкеты\n2. Моя анкета\n3. Редактировать анкету\n4.  Кто оценил мою анкету?\n5. Контакты\n'
+def formatted_commands():
+    commands = ''
+    for c in BOT_COMMANDS:
+        commands += f'/{c.command} - {c.description}\n'
+    return commands

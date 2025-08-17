@@ -1,6 +1,7 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.types import ReplyKeyboardMarkup
 
+
 def choice_keyboard(choices: str | list[str], size: tuple[int]=(1, 1)) -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     if isinstance(choices, str):

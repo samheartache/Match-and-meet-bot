@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 import validators
-import keyboards.inlines as kb_i
+import messages
 import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
 from states import Register
@@ -94,9 +94,8 @@ async def handle_photo(message: Message, state: FSMContext):
         photo = message.photo[-1].file_id
         await state.update_data(photo=photo)
         data = await state.get_data()
-        await state.set_state(Register.is_correct)
         await send_profile(message=message, state=state, data=data)
-        await message.answer('Все верно?', reply_markup=kb_i.is_profile_correct)
+        await message.answer(text=messages.FINISH_REGISTER)
         return
     else:
         await message.answer('Отправьте фото корректно')
