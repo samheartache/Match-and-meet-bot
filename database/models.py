@@ -12,7 +12,7 @@ class User(Base):
     __tablename__ = 'user'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    tg_id: Mapped[int] = mapped_column(BigInteger)
+    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     username: Mapped[str] = mapped_column(String(20))
     age: Mapped[int]
     city: Mapped[str] = mapped_column(String(25))
@@ -28,7 +28,7 @@ class User(Base):
 class Like(Base):
     __tablename__ = 'like'
 
-    id: Mapped[int] = mapped_column(primary_key=True, auroincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tg_id: Mapped[int] = mapped_column(ForeignKey('user.tg_id', ondelete='CASCADE'))
     liked_id: Mapped[int] = mapped_column(ForeignKey('user.tg_id', ondelete='CASCADE'))
     message: Mapped[str] = mapped_column(String(100))

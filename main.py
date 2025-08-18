@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from handlers import commands, profile_handlers
 from utils import BOT_COMMANDS
+from database.config import start_db_engine
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -16,6 +17,7 @@ dispatcher = Dispatcher()
 
 
 async def main():
+    await start_db_engine()
     dispatcher.include_routers(
         commands.router,
         profile_handlers.router
