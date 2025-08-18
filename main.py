@@ -5,7 +5,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
-from handlers import commands, profile_handlers
+from handlers import commands, profile_handlers, edit
 from utils import BOT_COMMANDS
 from database.config import start_db_engine
 
@@ -20,7 +20,8 @@ async def main():
     await start_db_engine()
     dispatcher.include_routers(
         commands.router,
-        profile_handlers.router
+        profile_handlers.router,
+        edit.router
     )
     await bot.set_my_commands(BOT_COMMANDS)
     await bot.delete_webhook(drop_pending_updates=True)
