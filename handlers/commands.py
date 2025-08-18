@@ -8,6 +8,7 @@ import messages
 import keyboards.inlines as kb_i
 from keyboards.replies import menu_keyboard
 from states import GlobalStates
+from handlers.profile_handlers import send_profile
 
 router = Router()
 
@@ -21,3 +22,8 @@ async def start(message: Message):
 async def help(message: Message, state: FSMContext):
     await state.set_state(GlobalStates.menu)
     await message.answer(text=messages.HELP, reply_markup=menu_keyboard)
+
+
+@router.message(Command('profile'))
+async def profile(message: Message, state: FSMContext):
+    await send_profile(message=message, state=state)

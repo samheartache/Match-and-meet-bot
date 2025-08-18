@@ -9,7 +9,6 @@ from keyboards.builders import choice_keyboard
 from states import Register, Edit, GlobalStates
 from utils import profile_template
 from database import requests
-from handlers.commands import help
 
 router = Router()
 
@@ -162,6 +161,8 @@ async def profile_edit(message: Message, state: FSMContext):
     elif message.text == '📝 Заполнить анкету заново':
         await state.set_state(Edit.reg_again)
     elif message.text == 'Назад в меню':
+        from handlers.commands import help
+        
         await help(message=message, state=state)
     else:
         await message.answer('Нет такого варианта ответа')
