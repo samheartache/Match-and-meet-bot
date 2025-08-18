@@ -4,10 +4,18 @@ from database.models import User, Like
 from database.config import async_session
 
 
-async def insert_user(user_data):
+async def insert_user(user_data, tg_id):
     async with async_session() as session:
-        user = User(**user_data)
-        session.add(user)
+        query = select(User).where(User.tg_id == tg_id)
+        user = await session.scalar(query)
+
+        if not user:
+            new_user = User(**user_data)
+            session.add(new_user)
+        else:
+            for property in user_data.keys():
+                setattr(user, property, user_data[property])
+        
         await session.commit()
 
 

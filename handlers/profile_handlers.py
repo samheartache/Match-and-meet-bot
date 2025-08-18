@@ -111,7 +111,7 @@ async def handle_photo(message: Message, state: FSMContext):
         photo = message.photo[-1].file_id
         await state.update_data(photo=photo)
         data = await state.get_data()
-        await requests.insert_user(user_data=data)
+        await requests.insert_user(user_data=data, tg_id=message.from_user.id)
         await send_profile(message=message, state=state, after_register=True)
         await message.answer(text=messages.FINISH_REGISTER, reply_markup=kb_r.menu_keyboard)
         await state.clear()
@@ -119,6 +119,7 @@ async def handle_photo(message: Message, state: FSMContext):
     else:
         await message.answer('Отправьте фото корректно')
         return
+
 
 @router.message(F.text == '👤 Моя анкета')
 async def send_profile(message: Message, state: FSMContext, after_register=False):
@@ -159,15 +160,16 @@ async def profile_edit(message: Message, state: FSMContext):
         await message.answer('Отправьте новое фото', reply_markup=choice_keyboard('Назад'))
         await state.set_state(Edit.photo)
     elif message.text == '📝 Заполнить анкету заново':
-        await state.set_state(Edit.reg_again)
+        await state.set_state(Register.sex)
+        await message.answer(text='Введите ваш пол', reply_markup=choice_keyboard(['Мужской', 'Женский'], size=(2, 1)))
     elif message.text == 'Назад в меню':
         from handlers.commands import help
-        
+
         await help(message=message, state=state)
     else:
         await message.answer('Нет такого варианта ответа')
         return
-        
+
 
 @router.message(Edit.name)
 async def change_name(message: Message, state: FSMContext):
