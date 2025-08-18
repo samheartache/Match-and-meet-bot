@@ -2,6 +2,7 @@ from aiogram.types import BotCommand
 
 BOT_COMMANDS = [
     BotCommand(command='start', description='Регистрация'),
+    BotCommand(command='help', description='Список команд'),
     BotCommand(command='profile', description='Моя анкета'),
     BotCommand(command='editprofile', description='Редактировать анкету'),
     BotCommand(command='search', description='Искать анкеты'),
@@ -27,6 +28,6 @@ def formatted_commands():
 
 def profile_template(username, age, city, description, sex, search_desire, searched_by):
     if description:
-        return f'''⭐ Имя: {username}\n🔞 Возраст: {age}\n🏙️ Город: {city}\n📝 Описание: {description}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
+        return f'''⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n📝 Описание: {description}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
     else:
-        return f'''⭐ Имя: {username}\n🔞 Возраст: {age}\n🏙️ Город: {city}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
+        return f'''⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''

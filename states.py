@@ -10,3 +10,20 @@ class Register(StatesGroup):
     description = State()
     photo = State()
     city = State()
+
+
+class Edit(StatesGroup):
+    sex = State()
+    search_desire = State()
+    searched_by = State()
+    name = State()
+    age = State()
+    description = State()
+    photo = State()
+    city = State()
+    reg_again = State()
+
+
+class GlobalStates(StatesGroup):
+    profile_edit = State()
+    menu = State()
