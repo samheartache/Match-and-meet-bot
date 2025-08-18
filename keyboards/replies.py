@@ -5,6 +5,11 @@ search_desire = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Не важно')]
 ], resize_keyboard=True, one_time_keyboard=True)
 
+searched_by = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Девушкам'), KeyboardButton(text='Парням')],
+    [KeyboardButton(text='Не важно')]
+], resize_keyboard=True, one_time_keyboard=True)
+
 menu_keyboard = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='👤 Моя анкета'), KeyboardButton(text='🚀 Искать анкеты'),
      KeyboardButton(text='❤️ Кто меня оценил?')],

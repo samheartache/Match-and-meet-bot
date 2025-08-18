@@ -6,6 +6,10 @@ def search_desire_validate(data: str | None):
     return data in ('Девушек', 'Парней', 'Не важно')
 
 
+def searched_by_validate(data: str | None):
+    return data in ('Девушкам', 'Парням', 'Не важно')
+
+
 def name_validate(data: str | None):
     if data:
         return len(data) <= 20

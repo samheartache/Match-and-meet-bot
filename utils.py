@@ -10,6 +10,11 @@ BOT_COMMANDS = [
     BotCommand(command='deleteprofile', description='Удалить анкету'),
 ]
 
+SEX = {0: 'Женский', 1: 'Мужской'}
+SEARCH_DESIRE = {0: 'Девушек', 1: 'Парней', None: 'Всех'}
+SEARCHED_BY = {0: 'Девушкам', 1: 'Парням', None: 'Всем'}
+SEX_EMOJI = {0: '👩🏻', 1: '🧑🏻', None: '🚻'}
+
 
 def welcome_greet(name):
     return f'Привет, {name}. \nДобро пожаловать в бот для знакомтсв. \nДля того чтобы пользоваться ботом, необходимо создать свою анкету.'
@@ -19,3 +24,9 @@ def formatted_commands():
     for c in BOT_COMMANDS:
         commands += f'/{c.command} - {c.description}\n'
     return commands
+
+def profile_template(username, age, city, description, sex, search_desire, searched_by):
+    if description:
+        return f'''⭐ Имя: {username}\n🔞 Возраст: {age}\n🏙️ Город: {city}\n📝 Описание: {description}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
+    else:
+        return f'''⭐ Имя: {username}\n🔞 Возраст: {age}\n🏙️ Город: {city}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
