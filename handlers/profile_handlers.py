@@ -8,6 +8,7 @@ import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
 from states import Register
 from utils import profile_template
+from database import requests
 
 router = Router()
 
@@ -16,7 +17,6 @@ router = Router()
 async def start_signup(callback: CallbackQuery, state: FSMContext) -> None:
     await callback.answer()
     await state.set_state(Register.sex)
-    await state.update_data(tg_id=callback.message.from_user.id)
     await callback.message.answer(text='Введите ваш пол', reply_markup=choice_keyboard(['Мужской', 'Женский'], size=(2, 1)))
 
 
@@ -25,6 +25,7 @@ async def handle_sex(message: Message, state: FSMContext):
     if validators.sex_validate(data=message.text):
         sex = 1 if message.text == 'Мужской' else 0
         await state.update_data(sex=sex)
+        await state.update_data(tg_id=message.from_user.id)
         await state.set_state(Register.search_desire)
         await message.answer(text='Чьи анкеты вы хотите смотреть?', reply_markup=kb_r.search_desire)
         return
@@ -110,8 +111,8 @@ async def handle_photo(message: Message, state: FSMContext):
         photo = message.photo[-1].file_id
         await state.update_data(photo=photo)
         data = await state.get_data()
-        print(data)
-        await send_profile(message=message, state=state, data=data, after_register=True)
+        await requests.insert_user(user_data=data)
+        await send_profile(message=message, state=state, after_register=True)
         await message.answer(text=messages.FINISH_REGISTER, reply_markup=kb_r.menu_keyboard)
         await state.clear()
         return
@@ -120,17 +121,17 @@ async def handle_photo(message: Message, state: FSMContext):
         return
 
 @router.message(F.text == '👤 Моя анкета')
-async def send_profile(message: Message, state: FSMContext, data=None, after_register=False):
+async def send_profile(message: Message, state: FSMContext, after_register=False):
     await message.answer('Вот ваша анкета: ')
-
+    user = await requests.select_user_profile(tg_id=message.from_user.id)
     if not after_register:
-        if data['description']:
+        if user.description:
             await message.answer_photo(
-            photo=data['photo'], caption=profile_template(username=data['username'], age=data['age'], city=data['city'],\
-            description=data['description'], sex=data['sex'], search_desire=data['search_desire'], searched_by=data['searched_by'])
+            photo=user.photo, caption=profile_template(username=user.username, age=user.age, city=user.city,\
+            description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
             , reply_markup=kb_r.profile_keyboard)
     else:
         await message.answer_photo(
-            photo=data['photo'], caption=profile_template(username=data['username'], age=data['age'], city=data['city'],\
-            description=data['description'], sex=data['sex'], search_desire=data['search_desire'], searched_by=data['searched_by'])
+            photo=user.photo, caption=profile_template(username=user.username, age=user.age, city=user.city,\
+            description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
             )
