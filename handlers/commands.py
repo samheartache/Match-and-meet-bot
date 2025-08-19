@@ -7,10 +7,11 @@ import utils
 import messages
 import keyboards.inlines as kb_i
 from keyboards.replies import menu_keyboard
-from states import GlobalStates
+from states import GlobalStates, SearchStates
 import keyboards.replies as kb_r
+from keyboards.builders import choice_keyboard
 from database import requests
-from utils import userprofile_template
+from utils import userprofile_template, foundprofile_template
 
 router = Router()
 
@@ -27,7 +28,7 @@ async def help(message: Message, state: FSMContext):
 
 
 @router.message(Command("profile"))
-async def send_profile(message: Message, state: FSMContext, after_register=False):
+async def send_myprofile(message: Message, state: FSMContext, after_register=False):
     await state.set_state(GlobalStates.profile_edit)
     await message.answer('Вот ваша анкета: ')
     user = await requests.select_user_profile(tg_id=message.from_user.id)
@@ -42,3 +43,14 @@ async def send_profile(message: Message, state: FSMContext, after_register=False
             photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
             description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
             )
+
+
+@router.message(Command('search'))
+async def find_profile(message: Message, state: FSMContext):
+    found_profile = await requests.find_profile(tg_id=message.from_user.id)
+    if found_profile:
+        await message.answer_photo(photo=found_profile.photo, caption=foundprofile_template(username=found_profile.username, age=found_profile.age,\
+                                                                                            city=found_profile.city, description=found_profile.description, sex=found_profile.sex),\
+                                                                                            reply_markup=choice_keyboard(['❤️', '👎', '💌'], size=(3, 1)))
+        await state.update_data(liked_id=found_profile.tg_id)
+        await state.set_state(SearchStates.rate_profile)

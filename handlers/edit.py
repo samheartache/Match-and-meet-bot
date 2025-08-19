@@ -6,7 +6,7 @@ import validators
 from states import Register, Edit, GlobalStates
 from keyboards.builders import choice_keyboard
 from database import requests
-from handlers.commands import send_profile
+from handlers.commands import send_myprofile
 
 router = Router()
 
@@ -48,11 +48,11 @@ async def change_name(message: Message, state: FSMContext):
     name = message.text
     if validators.name_validate(name) and name != 'Назад':
         await requests.update_single_property(tg_id=message.from_user.id, property='username', new_value=message.text)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваше имя успешно обновлено 🎉')
     elif name == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Введите имя корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -63,11 +63,11 @@ async def change_age(message: Message, state: FSMContext):
     age = message.text
     if validators.name_validate(age) and age != 'Назад':
         await requests.update_single_property(tg_id=message.from_user.id, property='age', new_value=int(message.text))
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваш возраст успешно обновлен 🎉')
     elif age == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Введите возраст корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -82,7 +82,7 @@ async def change_sex(message: Message, state: FSMContext):
         await message.answer(text='Кого вы хотите искать?', reply_markup=choice_keyboard(['Парней', 'Девушек', 'Не важно', 'Назад'], size=(3, 1)))
     elif message.text == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Введите пол корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -97,7 +97,7 @@ async def change_sex(message: Message, state: FSMContext):
         await message.answer(text='Кому отображать вашу анкету?', reply_markup=choice_keyboard(['Парням', 'Девушкам', 'Не важно', 'Назад'], size=(3, 1)))
     elif message.text == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Выберите корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -108,11 +108,11 @@ async def change_sex(message: Message, state: FSMContext):
     if validators.name_validate(message.text) and message.text != 'Назад':
         searched_by = {'Девушкам': 0, 'Парням': 1, 'Не важно': None}.get(message.text)
         await requests.update_single_property(tg_id=message.from_user.id, property='searched_by', new_value=searched_by)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваши настройки успешно обновлены 🎉')
     elif message.text == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Выберите корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -123,11 +123,11 @@ async def change_city(message: Message, state: FSMContext):
     city = message.text
     if validators.name_validate(city) and city != 'Назад':
         await requests.update_single_property(tg_id=message.from_user.id, property='city', new_value=message.text)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваш город успешно обновлен 🎉')
     elif city == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Введите город корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -138,11 +138,11 @@ async def change_description(message: Message, state: FSMContext):
     description = message.text
     if validators.name_validate(description) and description != 'Назад':
         await requests.update_single_property(tg_id=message.from_user.id, property='description', new_value=message.text)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваше описание успешно обновлено 🎉')
     elif description == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Введите описание корректно', reply_markup=choice_keyboard('Назад'))
         return
@@ -153,11 +153,11 @@ async def change_photo(message: Message, state: FSMContext):
     photo = message.photo
     if validators.name_validate(photo) and photo != 'Назад':
         await requests.update_single_property(tg_id=message.from_user.id, property='photo', new_value=message.photo[-1].file_id)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
         await message.answer(text='Ваше фото успешно обновлено 🎉')
     elif photo == 'Назад':
         await state.set_state(GlobalStates.profile_edit)
-        await send_profile(message=message, state=state)
+        await send_myprofile(message=message, state=state)
     else:
         await message.answer('Отправьте фото корректно', reply_markup=choice_keyboard('Назад'))
         return

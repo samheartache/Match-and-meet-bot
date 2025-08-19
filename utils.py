@@ -37,3 +37,13 @@ def foundprofile_template(username, age, city, description, sex):
         return f'{SEX_EMOJI[sex]}: {username}, {age} \n📝: {description}\n🏙️: {city}'
     else:
         return f'{SEX_EMOJI[sex]}: {username}, {age}\n🏙️: {city}'
+
+
+def display_like_template(tg_id, username, age, city, description, sex, message=None, is_mutual=False):
+    if is_mutual:
+        result = f'У вас взаимный лайк с [{username}](tg://user?id={tg_id})\n\n{SEX_EMOJI[sex]}: {username}, {age} \n📝: {description}\n🏙️: {city}'
+    else:
+        result = f'Вас лайкнул {username}\n{SEX_EMOJI[sex]}: {username}, {age} \n📝: {description}\n🏙️: {city}'
+    if message:
+        result += f'\nСообщение для вас:\n{message}'
+    return result

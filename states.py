@@ -32,3 +32,4 @@ class GlobalStates(StatesGroup):
 class SearchStates(StatesGroup):
     search_profile = State()
     rate_profile = State()
+    send_message = State()

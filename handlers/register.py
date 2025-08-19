@@ -6,8 +6,8 @@ import validators
 import messages
 import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
-from states import Register
-from handlers.commands import send_profile
+from states import Register, GlobalStates
+from handlers.commands import send_myprofile
 from database import requests
 
 router = Router()
@@ -112,9 +112,9 @@ async def handle_photo(message: Message, state: FSMContext):
         await state.update_data(photo=photo)
         data = await state.get_data()
         await requests.insert_user(user_data=data, tg_id=message.from_user.id)
-        await send_profile(message=message, state=state, after_register=True)
+        await send_myprofile(message=message, state=state, after_register=True)
+        await state.set_state(GlobalStates.menu)
         await message.answer(text=messages.FINISH_REGISTER, reply_markup=kb_r.menu_keyboard)
-        await state.clear()
         return
     else:
         await message.answer('Отправьте фото корректно')
