@@ -27,3 +27,8 @@ class Edit(StatesGroup):
 class GlobalStates(StatesGroup):
     profile_edit = State()
     menu = State()
+
+
+class SearchStates(StatesGroup):
+    search_profile = State()
+    rate_profile = State()

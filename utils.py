@@ -25,8 +25,15 @@ def formatted_commands():
         commands += f'/{c.command} - {c.description}\n'
     return commands
 
-def profile_template(username, age, city, description, sex, search_desire, searched_by):
+def userprofile_template(username, age, city, description, sex, search_desire, searched_by):
     if description:
-        return f'''⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n📝 Описание: {description}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
+        return f'⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n📝 Описание: {description}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'
     else:
-        return f'''⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'''
+        return f'⭐ Имя: {username}\n🎂 Возраст: {age}\n🏙️ Город: {city}\n\nВаш пол: {SEX_EMOJI[sex]} {SEX[sex]}\nХотите искать: {SEX_EMOJI[search_desire]} {SEARCH_DESIRE[search_desire]}\nВаша анкета видна: {SEX_EMOJI[searched_by]} {SEARCHED_BY[searched_by]}'
+
+
+def foundprofile_template(username, age, city, description, sex):
+    if description:
+        return f'{SEX_EMOJI[sex]}: {username}, {age} \n📝: {description}\n🏙️: {city}'
+    else:
+        return f'{SEX_EMOJI[sex]}: {username}, {age}\n🏙️: {city}'

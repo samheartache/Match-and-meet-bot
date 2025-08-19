@@ -7,4 +7,4 @@ FINISH_REGISTER = f'''
 {formatted_commands()}
 '''
 
-HELP = f'''{formatted_commands()}'''
+HELP = f'{formatted_commands()}'

@@ -10,7 +10,7 @@ from keyboards.replies import menu_keyboard
 from states import GlobalStates
 import keyboards.replies as kb_r
 from database import requests
-from utils import profile_template
+from utils import userprofile_template
 
 router = Router()
 
@@ -34,16 +34,11 @@ async def send_profile(message: Message, state: FSMContext, after_register=False
     if not after_register:
         if user.description:
             await message.answer_photo(
-            photo=user.photo, caption=profile_template(username=user.username, age=user.age, city=user.city,\
+            photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
             description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
             , reply_markup=kb_r.profile_keyboard)
     else:
         await message.answer_photo(
-            photo=user.photo, caption=profile_template(username=user.username, age=user.age, city=user.city,\
+            photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
             description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
             )
-
-
-@router.message(F.text == "👤 Моя анкета")
-async def text_profile(message: Message, state: FSMContext):
-    await send_profile(message=message, state=state)

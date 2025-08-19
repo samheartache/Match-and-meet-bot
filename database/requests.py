@@ -32,3 +32,23 @@ async def update_single_property(tg_id, property, new_value):
         user = await session.scalar(query)
         setattr(user, property, new_value)
         await session.commit()
+
+
+async def find_profile(tg_id):
+    async with async_session() as session:
+        print('jdkssljdksljklfjdksl')
+        input()
+        user_profile = await select_user_profile(tg_id=tg_id)
+        user_likes_query = select(Like.liked_id).where(Like.tg_id == tg_id)
+        search_query = select(User).where(
+            User.tg_id != user_profile.tg_id,
+            User.city == user_profile.city,
+            User.age == user_profile.age,
+            User.searched_by == user_profile.sex,
+            User.sex == user_profile.search_desire,
+            User.tg_id.not_in(user_likes_query)
+        )
+
+        result_profile = await session.scalars(search_query)
+        return result_profile.first()
+
