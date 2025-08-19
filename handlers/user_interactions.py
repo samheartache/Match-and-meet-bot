@@ -35,10 +35,10 @@ async def rate_profile(message: Message, state: FSMContext):
         like_counts = await requests.get_likes_count(tg_id=liked_id)
         if like_counts == 1:
             await find_profile(message=message, state=state)
-            await message.answer(text='Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
+            await message.bot.send_message(chat_id=liked_id, text='❤️ Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
         elif like_counts % 5 == 0:
             await find_profile(message=message, state=state)
-            await message.answer(text=f'У вас уже целых {like_counts} оценок', reply_markup=kb_i.watch_likes)
+            await message.bot.send_message(chat_id=liked_id, text=f'У вас уже целых {like_counts} оценок 🤯', reply_markup=kb_i.watch_likes)
 
     elif message.text == '👎':
         await requests.insert_like(tg_id=tg_id, liked_id=liked_id, message=None, is_like=False)
@@ -58,10 +58,10 @@ async def send_message(message: Message, state: FSMContext):
     like_counts = await requests.get_likes_count(tg_id=liked_id)
     if like_counts == 1:
         await find_profile(message=message, state=state)
-        await message.bot.send_message(chat_id=liked_id, text='Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
+        await message.bot.send_message(chat_id=liked_id, text='❤️ Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
     elif like_counts % 5 == 0:
         await find_profile(message=message, state=state)
-        await message.bot.send_message(chat_id=liked_id, text=f'У вас уже целых {like_counts} оценок', reply_markup=kb_i.watch_likes)
+        await message.bot.send_message(chat_id=liked_id, text=f'У вас уже целых {like_counts} оценок 🤯', reply_markup=kb_i.watch_likes)
 
 
 @router.callback_query(F.data == 'watch_likes')

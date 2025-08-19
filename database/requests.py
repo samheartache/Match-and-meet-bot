@@ -64,7 +64,7 @@ async def find_profile(tg_id):
 
 async def insert_like(tg_id, liked_id, message=None, is_like=True):
     async with async_session() as session:
-        if has_like(tg_id=tg_id, liked_id=liked_id):
+        if await has_like(tg_id=tg_id, liked_id=liked_id):
             new_like = Like(
                 tg_id=tg_id,
                 liked_id=liked_id,
@@ -90,10 +90,8 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
 async def has_like(tg_id, liked_id):
     async with async_session() as session:
         like_query = select(Like).where(Like.tg_id == liked_id, Like.liked_id == tg_id)
-        like = await session.scalars(like_query)
-        if like:
-            return True
-        return False
+        result = await session.scalars(like_query)
+        return result.first() is not None
 
 
 async def get_likes_count(tg_id):
