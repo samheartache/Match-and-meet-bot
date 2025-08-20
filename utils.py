@@ -19,11 +19,13 @@ SEX_EMOJI = {0: '👩🏻', 1: '🧑🏻', None: '🚻'}
 def welcome_greet(name):
     return f'Привет, {name}. \nДобро пожаловать в бот для знакомтсв. \nДля того чтобы пользоваться ботом, необходимо создать свою анкету.'
 
+
 def formatted_commands():
     commands = ''
     for c in BOT_COMMANDS:
         commands += f'/{c.command} - {c.description}\n'
     return commands
+
 
 def userprofile_template(username, age, city, description, sex, search_desire, searched_by):
     if description:
@@ -45,5 +47,5 @@ def display_like_template(tg_id, username, age, city, description, sex, message=
     else:
         result = f'Вас лайкнул {username}\n{SEX_EMOJI[sex]}: {username}, {age} \n📝: {description}\n🏙️: {city}'
     if message:
-        result += f'\nСообщение для вас:\n{message}'
+        result += f'\n\n💌: *{message}*'
     return result

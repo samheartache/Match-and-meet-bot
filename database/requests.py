@@ -1,5 +1,5 @@
 from sqlalchemy import select, or_, func
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 from database.models import User, Like
 from database.config import async_session
@@ -38,28 +38,27 @@ async def update_single_property(tg_id, property, new_value):
 async def find_profile(tg_id):
     async with async_session() as session:
         user_profile = await select_user_profile(tg_id=tg_id)
-        user_likes_query = select(Like.liked_id).where(Like.tg_id == tg_id)
 
-        if user_profile.search_desire is not None:
-            search_query = select(User).where(
+        LikeAlias = aliased(Like)
+
+        search_query = (
+            select(User)
+            .outerjoin(
+                LikeAlias,
+                (LikeAlias.liked_id == User.tg_id) & (LikeAlias.tg_id == tg_id)
+            )
+            .where(
                 User.tg_id != user_profile.tg_id,
                 User.city == user_profile.city,
                 User.age == user_profile.age,
                 or_(User.searched_by == user_profile.sex, User.searched_by == None),
-                User.sex == user_profile.search_desire,
-                User.tg_id.not_in(user_likes_query)
+                (User.sex == user_profile.search_desire) if user_profile.search_desire else True,
             )
-        else:
-            search_query = select(User).where(
-                User.tg_id != user_profile.tg_id,
-                User.city == user_profile.city,
-                User.age == user_profile.age,
-                or_(User.searched_by == user_profile.sex, User.seached_by == None),
-                User.tg_id.not_in(user_likes_query)
-            )
+            .order_by(LikeAlias.time_created.isnot(None), LikeAlias.time_created.asc())
+        )
 
-        result_profile = await session.scalars(search_query)
-        return result_profile.first()
+        result = await session.scalars(search_query)
+        return result.first()
 
 
 async def insert_like(tg_id, liked_id, message=None, is_like=True):
@@ -89,7 +88,7 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
 
 async def has_like(tg_id, liked_id):
     async with async_session() as session:
-        like_query = select(Like).where(Like.tg_id == liked_id, Like.liked_id == tg_id)
+        like_query = select(Like).where(Like.tg_id == liked_id, Like.liked_id == tg_id, Like.is_mutual == False)
         result = await session.scalars(like_query)
         return result.first() is not None
 

@@ -16,7 +16,6 @@ async def menu_choices(message: Message, state: FSMContext):
     if message.text == '👤 Моя анкета':
         await send_myprofile(message=message, state=state)
     elif message.text == '🚀 Искать анкеты':
-        print('fjdkfdskjkf')
         await find_profile(message=message, state=state)
     elif message.text == '❤️ Кто меня оценил?':
         await message.answer('Вас лайкнули:')
@@ -33,12 +32,8 @@ async def rate_profile(message: Message, state: FSMContext):
     if message.text == '❤️':
         await requests.insert_like(tg_id=tg_id, liked_id=liked_id, message=None, is_like=True)
         like_counts = await requests.get_likes_count(tg_id=liked_id)
-        if like_counts == 1:
-            await find_profile(message=message, state=state)
-            await message.bot.send_message(chat_id=liked_id, text='❤️ Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
-        elif like_counts % 5 == 0:
-            await find_profile(message=message, state=state)
-            await message.bot.send_message(chat_id=liked_id, text=f'У вас уже целых {like_counts} оценок 🤯', reply_markup=kb_i.watch_likes)
+        await find_profile(message=message, state=state)
+        await message.bot.send_message(chat_id=liked_id, text=f'❤️ Кто-то оценил вашу анкету!\n\nОбщее количество оценок: {like_counts}', reply_markup=kb_i.watch_likes)
 
     elif message.text == '👎':
         await requests.insert_like(tg_id=tg_id, liked_id=liked_id, message=None, is_like=False)
@@ -56,24 +51,22 @@ async def send_message(message: Message, state: FSMContext):
     tg_id = message.from_user.id
     await requests.insert_like(tg_id=tg_id, liked_id=liked_id, message=message.text, is_like=True)
     like_counts = await requests.get_likes_count(tg_id=liked_id)
-    if like_counts == 1:
-        await find_profile(message=message, state=state)
-        await message.bot.send_message(chat_id=liked_id, text='❤️ Кто-то оценил вашу анкету!', reply_markup=kb_i.watch_likes)
-    elif like_counts % 5 == 0:
-        await find_profile(message=message, state=state)
-        await message.bot.send_message(chat_id=liked_id, text=f'У вас уже целых {like_counts} оценок 🤯', reply_markup=kb_i.watch_likes)
+    await find_profile(message=message, state=state)
+    await message.bot.send_message(chat_id=liked_id, text=f'💌 Кто-то отправил вам сообщение!\n\nОбщее количество оценок: {like_counts}', reply_markup=kb_i.watch_likes)
 
 
 @router.callback_query(F.data == 'watch_likes')
 async def watch_likes_callback(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    user_likes = await requests.get_my_likes(tg_id=712020807)
+    user_likes = await requests.get_my_likes(tg_id=callback.from_user.id)
     for like in user_likes:
         if not like.is_mutual:
-            await callback.message.answer_photo(photo=like.user.photo, caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
-                                                                                                    sex=like.user.sex, message=like.message, is_mutual=like.is_mutual,\
-                                                                                                    city=like.user.city, description=like.user.description), reply_markup=kb_i.like_user)
+            await callback.message.answer_photo(photo=like.user.photo, \
+                                                caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
+                                                sex=like.user.sex, message=like.message, is_mutual=like.is_mutual,\
+                                                city=like.user.city, description=like.user.description), reply_markup=kb_i.like_user, parse_mode='MarkdownV2')
         else:
-            await callback.message.answer_photo(photo=like.user.photo, caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
-                                                                                                    sex=like.user.sex, message=like.message, is_mutual=like.is_mutual,\
-                                                                                                    city=like.user.city, description=like.user.description), parse_mode='Markdown')
+            await callback.message.answer_photo(photo=like.user.photo, \
+                                                caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
+                                                sex=like.user.sex, message=like.message, is_mutual=like.is_mutual,\
+                                                city=like.user.city, description=like.user.description), parse_mode='MarkdownV2')
