@@ -97,7 +97,11 @@ async def notify_like(message: Message, tg_id, has_message=False):
 async def notify_mutual_like(message: Message, profile_1, profile_2):
     likes = await requests.get_like_between(profile_1.tg_id, profile_2.tg_id)
 
-    message_2, message_1 = [like.message for like in likes if like.message]
+    messages = [like.message for like in likes if like.message]
+    if messages:
+        message_1, message_2 = messages
+    else:
+        message_2 = message_1 = None
 
     text_1 = display_like_template(
         is_mutual=True,
@@ -107,7 +111,8 @@ async def notify_mutual_like(message: Message, profile_1, profile_2):
         city=profile_2.city,
         description=profile_2.description,
         sex=profile_2.sex,
-        message=message_1 if message_1 else None
+        message=message_2,
+        tg_username=profile_2.tg_username
     )
 
     await message.bot.send_photo(chat_id=profile_1.tg_id, photo=profile_2.photo, caption=text_1, parse_mode='MarkdownV2')
@@ -120,7 +125,8 @@ async def notify_mutual_like(message: Message, profile_1, profile_2):
         city=profile_1.city,
         description=profile_1.description,
         sex=profile_1.sex,
-        message=message_2 if message_2 else None
+        message=message_1,
+        tg_username=profile_1.tg_username
     )
 
     await message.bot.send_photo(chat_id=profile_2.tg_id, photo=profile_1.photo, caption=text_2, parse_mode='MarkdownV2')
