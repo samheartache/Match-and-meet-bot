@@ -9,6 +9,8 @@ watch_likes = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Не уведомлять о лайках', callback_data='notif_off')]
 ])
 
-like_user = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='❤️', callback_data='like_user'), InlineKeyboardButton(text='👎', callback_data='dislike_user')]
-])
+like_user = lambda tg_id: InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data='dislike_user:{tg_id}')]
+    ]
+)

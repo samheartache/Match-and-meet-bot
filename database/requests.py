@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, or_, func, desc
 from sqlalchemy.orm import joinedload, aliased
 
 from database.models import User, Like
@@ -83,7 +83,11 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
             )
         
         session.add(new_like)
+        is_mutual = new_like.is_mutual
+
         await session.commit()
+
+        return is_mutual
 
 
 async def has_like(tg_id, liked_id):
@@ -109,3 +113,22 @@ async def get_my_likes(tg_id):
         )
         result = await session.scalars(query)
         return result.all()
+
+
+async def get_like_between(user_id_1, user_id_2):
+    async with async_session() as session:
+        query = (
+            select(Like)
+            .where(
+                ((Like.tg_id == user_id_1) & (Like.liked_id == user_id_2))
+                | ((Like.tg_id == user_id_2) & (Like.liked_id == user_id_1))
+            )
+            .order_by(desc(Like.time_created))
+        )
+        result = await session.scalars(query)
+        likes = result.all()
+
+    latest_from_user1 = next((like for like in likes if like.tg_id == user_id_1), None)
+    latest_from_user2 = next((like for like in likes if like.tg_id == user_id_2), None)
+
+    return latest_from_user1, latest_from_user2

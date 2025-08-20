@@ -52,5 +52,5 @@ async def find_profile(message: Message, state: FSMContext):
         await message.answer_photo(photo=found_profile.photo, caption=foundprofile_template(username=found_profile.username, age=found_profile.age,\
                                                                                             city=found_profile.city, description=found_profile.description, sex=found_profile.sex),\
                                                                                             reply_markup=choice_keyboard(['❤️', '👎', '💌'], size=(3, 1)))
-        await state.update_data(liked_id=found_profile.tg_id)
+        await state.update_data(liked_profile=found_profile)
         await state.set_state(SearchStates.rate_profile)
