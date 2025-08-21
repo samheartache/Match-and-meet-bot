@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 from states import GlobalStates, SearchStates
-from handlers.commands import send_myprofile, find_profile
+from handlers.commands import send_myprofile, find_profile, watch_likes, help
 from database import requests
 import keyboards.inlines as kb_i
 from utils import display_like_template
@@ -18,9 +18,7 @@ async def menu_choices(message: Message, state: FSMContext):
     elif message.text == '🚀 Искать анкеты':
         await find_profile(message=message, state=state)
     elif message.text == '❤️ Кто меня оценил?':
-        await message.answer('Вас лайкнули:')
-    else:
-        await message.answer('Нет такого варианта ответа')
+        await watch_likes(message=message)
 
 
 @router.message(SearchStates.rate_profile)
@@ -47,6 +45,9 @@ async def rate_profile(message: Message, state: FSMContext):
     elif message.text == '💌':
         await state.set_state(SearchStates.send_message)
         await message.answer(text='Отправьте пользователю сообщение и он получит его')
+    
+    elif message.text == 'Назад в меню':
+        await help(message=message, state=state)
 
 
 @router.message(SearchStates.send_message)
@@ -66,26 +67,28 @@ async def send_message(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == 'watch_likes')
-async def watch_likes(callback: CallbackQuery, state: FSMContext):
+async def watch_likes_callback(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    user_likes = await requests.get_my_likes(tg_id=callback.from_user.id)
-
-    if not user_likes:
-        await callback.message.answer('К сожалению вашу анкету пока никто не лайкнул 😔', reply_markup=kb_i.no_likes)
-        return
-
-    for like in user_likes:
-        await callback.message.answer_photo(photo=like.user.photo, \
-                                            caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
-                                            sex=like.user.sex, message=like.message, is_mutual=like.is_mutual, city=like.user.city,\
-                                            description=like.user.description), reply_markup=kb_i.like_user(like.user.tg_id), parse_mode='MarkdownV2')
+    await watch_likes(message=callback.message, user_id=callback.from_user.id)
 
 
 @router.callback_query(F.data.startswith('like_user'))
 async def like_user(callback: CallbackQuery, state: FSMContext):
     liked_id = int(callback.data.split(':')[1])
+    await callback.answer('')
     await requests.insert_like(tg_id=callback.from_user.id, liked_id=liked_id)
-    # TODO - mutual like
+    await notify_mutual_like(message=callback.message, profile_1=await requests.select_user_profile(tg_id=liked_id),\
+                              profile_2=await requests.select_user_profile(tg_id=callback.from_user.id))
+    await callback.message.edit_reply_markup(reply_markup=None)
+
+
+@router.callback_query(F.data.startswith('dislike_user'))
+async def like_user(callback: CallbackQuery, state: FSMContext):
+    disliked_id = int(callback.data.split(':')[1])
+    await callback.answer('')
+    await requests.insert_like(tg_id=callback.from_user.id, liked_id=disliked_id)
+    await callback.message.edit_reply_markup(reply_markup=None)
+    
 
 
 async def notify_like(message: Message, tg_id, has_message=False):

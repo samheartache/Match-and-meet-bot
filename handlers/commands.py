@@ -11,7 +11,7 @@ from states import GlobalStates, SearchStates
 import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
 from database import requests
-from utils import userprofile_template, foundprofile_template
+from utils import display_like_template, userprofile_template, foundprofile_template
 
 router = Router()
 
@@ -27,7 +27,7 @@ async def help(message: Message, state: FSMContext):
     await message.answer(text=messages.HELP, reply_markup=menu_keyboard)
 
 
-@router.message(Command("profile"))
+@router.message(Command('profile'))
 async def send_myprofile(message: Message, state: FSMContext, after_register=False):
     await state.set_state(GlobalStates.profile_edit)
     await message.answer('Вот ваша анкета: ')
@@ -53,6 +53,22 @@ async def find_profile(message: Message, state: FSMContext, user_id=None):
     if found_profile:
         await message.answer_photo(photo=found_profile.photo, caption=foundprofile_template(username=found_profile.username, age=found_profile.age,\
                                                                                             city=found_profile.city, description=found_profile.description, sex=found_profile.sex),\
-                                                                                            reply_markup=choice_keyboard(['❤️', '👎', '💌'], size=(3, 1)))
+                                                                                            reply_markup=choice_keyboard(['❤️', '👎', '💌', 'Назад в меню'], size=(3, 1)))
         await state.update_data(liked_profile=found_profile)
         await state.set_state(SearchStates.rate_profile)
+
+
+@router.message(Command('likes'))
+async def watch_likes(message: Message, user_id=None):
+    tg_id = user_id if user_id else message.from_user.id
+    user_likes = await requests.get_my_likes(tg_id=tg_id)
+
+    if not user_likes:
+        await message.answer('К сожалению вашу анкету пока никто не лайкнул 😔', reply_markup=kb_i.no_likes)
+        return
+
+    for like in user_likes:
+        await message.answer_photo(photo=like.user.photo, \
+                                            caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
+                                            sex=like.user.sex, message=like.message, is_mutual=like.is_mutual, city=like.user.city,\
+                                            description=like.user.description), reply_markup=kb_i.like_user(like.user.tg_id), parse_mode='MarkdownV2')

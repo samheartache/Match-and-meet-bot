@@ -11,7 +11,7 @@ watch_likes = InlineKeyboardMarkup(inline_keyboard=[
 
 like_user = lambda tg_id: InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data='dislike_user:{tg_id}')]
+        [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data=f'dislike_user:{tg_id}')]
     ]
 )
 
