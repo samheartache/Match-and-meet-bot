@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 import utils
@@ -46,8 +46,10 @@ async def send_myprofile(message: Message, state: FSMContext, after_register=Fal
 
 
 @router.message(Command('search'))
-async def find_profile(message: Message, state: FSMContext):
-    found_profile = await requests.find_profile(tg_id=message.from_user.id)
+async def find_profile(message: Message, state: FSMContext, user_id=None):
+    tg_id = user_id if user_id else message.from_user.id
+
+    found_profile = await requests.find_profile(tg_id=tg_id)
     if found_profile:
         await message.answer_photo(photo=found_profile.photo, caption=foundprofile_template(username=found_profile.username, age=found_profile.age,\
                                                                                             city=found_profile.city, description=found_profile.description, sex=found_profile.sex),\

@@ -41,21 +41,37 @@ async def find_profile(tg_id):
 
         LikeAlias = aliased(Like)
 
-        search_query = (
-            select(User)
-            .outerjoin(
-                LikeAlias,
-                (LikeAlias.liked_id == User.tg_id) & (LikeAlias.tg_id == tg_id)
+        if user_profile.search_desire:
+            search_query = (
+                select(User)
+                .outerjoin(
+                    LikeAlias,
+                    (LikeAlias.liked_id == User.tg_id) & (LikeAlias.tg_id == tg_id)
+                )
+                .where(
+                    User.tg_id != user_profile.tg_id,
+                    User.city == user_profile.city,
+                    User.age == user_profile.age,
+                    or_(User.searched_by == user_profile.sex, User.searched_by == None),
+                    User.sex == user_profile.search_desire,
+                )
+                .order_by(LikeAlias.time_created.isnot(None), LikeAlias.time_created.asc())
             )
-            .where(
-                User.tg_id != user_profile.tg_id,
-                User.city == user_profile.city,
-                User.age == user_profile.age,
-                or_(User.searched_by == user_profile.sex, User.searched_by == None),
-                (User.sex == user_profile.search_desire) if user_profile.search_desire else True,
+        else:
+            search_query = (
+                select(User)
+                .outerjoin(
+                    LikeAlias,
+                    (LikeAlias.liked_id == User.tg_id) & (LikeAlias.tg_id == tg_id)
+                )
+                .where(
+                    User.tg_id != user_profile.tg_id,
+                    User.city == user_profile.city,
+                    User.age == user_profile.age,
+                    or_(User.searched_by == user_profile.sex, User.searched_by == None),
+                )
+                .order_by(LikeAlias.time_created.isnot(None), LikeAlias.time_created.asc())
             )
-            .order_by(LikeAlias.time_created.isnot(None), LikeAlias.time_created.asc())
-        )
 
         result = await session.scalars(search_query)
         return result.first()
@@ -63,24 +79,27 @@ async def find_profile(tg_id):
 
 async def insert_like(tg_id, liked_id, message=None, is_like=True):
     async with async_session() as session:
+        new_like = Like(
+            tg_id=tg_id,
+            liked_id=liked_id,
+            message=message,
+            is_like=is_like
+        )
+
         if await has_like(tg_id=tg_id, liked_id=liked_id):
-            new_like = Like(
-                tg_id=tg_id,
-                liked_id=liked_id,
-                message=message,
-                is_like=is_like,
-                is_watched=False,
-                is_mutual=True,
-            )
+            if is_like:
+                new_like.is_watched = True
+                new_like.is_mutual = True
+            else:
+                new_like.is_watched = None
+                new_like.is_mutual = False
         else:
-            new_like = Like(
-                tg_id=tg_id,
-                liked_id=liked_id,
-                message=message,
-                is_like=is_like,
-                is_watched=False,
-                is_mutual=False,
-            )
+            if is_like:
+                new_like.is_watched = False
+                new_like.is_mutual = False
+            else:
+                new_like.is_watched = None
+                new_like.is_mutual = False
         
         session.add(new_like)
         is_mutual = new_like.is_mutual
@@ -92,14 +111,14 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
 
 async def has_like(tg_id, liked_id):
     async with async_session() as session:
-        like_query = select(Like).where(Like.tg_id == liked_id, Like.liked_id == tg_id, Like.is_mutual == False)
+        like_query = select(Like).where(Like.tg_id == liked_id, Like.liked_id == tg_id, Like.is_mutual == False, Like.is_watched == False)
         result = await session.scalars(like_query)
         return result.first() is not None
 
 
 async def get_likes_count(tg_id):
     async with async_session() as session:
-        query = select(func.count()).where(Like.liked_id == tg_id)
+        query = select(func.count()).where(Like.liked_id == tg_id, Like.is_mutual == False, Like.is_like == True)
         result = await session.scalar(query)
         return result or 0
 
@@ -109,7 +128,7 @@ async def get_my_likes(tg_id):
         query = (
             select(Like)
             .options(joinedload(Like.user))
-            .where(Like.liked_id == tg_id, Like.is_like == True)
+            .where(Like.liked_id == tg_id, Like.is_like == True, Like.is_watched == False, Like.is_mutual == False)
         )
         result = await session.scalars(query)
         return result.all()
@@ -132,3 +151,13 @@ async def get_like_between(user_id_1, user_id_2):
     latest_from_user2 = next((like for like in likes if like.tg_id == user_id_2), None)
 
     return latest_from_user1, latest_from_user2
+
+
+async def set_mutual(tg_id, liked_id):
+    async with async_session() as session:
+        query = select(Like).where(Like.tg_id == tg_id, Like.liked_id == liked_id, Like.is_mutual == False)
+        like = await session.scalar(query)
+        like.is_mutual = True
+        like.is_watched = True
+
+        await session.commit()

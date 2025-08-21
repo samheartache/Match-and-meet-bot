@@ -14,3 +14,9 @@ like_user = lambda tg_id: InlineKeyboardMarkup(
         [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data='dislike_user:{tg_id}')]
     ]
 )
+
+no_likes = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='Продолжить смотреть анкеты', callback_data='resume')]
+        ]
+)

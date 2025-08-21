@@ -14,7 +14,6 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
     username: Mapped[str] = mapped_column(String(20))
-    tg_username: Mapped[str | None]
     age: Mapped[int]
     city: Mapped[str] = mapped_column(String(25))
     description: Mapped[str | None] = mapped_column(String(500))
@@ -39,6 +38,6 @@ class Like(Base):
 
     is_like: Mapped[bool]
     message: Mapped[str | None] = mapped_column(String(100))
-    is_watched: Mapped[bool]
+    is_watched: Mapped[bool | None]
     is_mutual: Mapped[bool]
     time_created: Mapped[datetime.datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))

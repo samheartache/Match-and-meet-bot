@@ -26,7 +26,6 @@ async def handle_sex(message: Message, state: FSMContext):
         sex = 1 if message.text == 'Мужской' else 0
         await state.update_data(sex=sex)
         await state.update_data(tg_id=message.from_user.id)
-        await state.update_data(tg_username=message.from_user.username)
         await state.set_state(Register.search_desire)
         await message.answer(text='Чьи анкеты вы хотите смотреть?', reply_markup=kb_r.search_desire)
         return
