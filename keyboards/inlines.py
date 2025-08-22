@@ -11,7 +11,8 @@ watch_likes = InlineKeyboardMarkup(inline_keyboard=[
 
 like_user = lambda tg_id: InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data=f'dislike_user:{tg_id}')]
+        [InlineKeyboardButton(text='❤️', callback_data=f'like_user:{tg_id}'), InlineKeyboardButton(text='👎', callback_data=f'dislike_user:{tg_id}')],
+        [InlineKeyboardButton(text='❗ Подать жалобу', callback_data=f'report_user:{tg_id}')]
     ]
 )
 
@@ -19,4 +20,10 @@ no_likes = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text='Продолжить смотреть анкеты', callback_data='resume')]
         ]
+)
+
+ban  = lambda tg_id: InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='❌ Забанить', callback_data=f'ban_user:{tg_id}')]
+    ]
 )

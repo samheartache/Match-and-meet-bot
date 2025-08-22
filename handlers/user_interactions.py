@@ -88,7 +88,6 @@ async def like_user(callback: CallbackQuery, state: FSMContext):
     await callback.answer('')
     await requests.insert_like(tg_id=callback.from_user.id, liked_id=disliked_id)
     await callback.message.edit_reply_markup(reply_markup=None)
-    
 
 
 async def notify_like(message: Message, tg_id, has_message=False):

@@ -161,3 +161,23 @@ async def set_mutual(tg_id, liked_id):
         like.is_watched = True
 
         await session.commit()
+
+
+async def add_report(tg_id):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.reports_count += 1
+        await session.commit()
+
+
+async def get_reports(tg_id):
+    async with async_session() as session:
+        user_reports = await session.scalar(select(User.reports_count).where(User.tg_id == tg_id))
+        return user_reports or 0
+
+
+async def ban_user(tg_id):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+        user.is_banned = True
+        await session.commit()
