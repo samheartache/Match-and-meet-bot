@@ -89,7 +89,8 @@ async def like_user(callback: CallbackQuery, state: FSMContext):
 async def like_user(callback: CallbackQuery, state: FSMContext):
     disliked_id = int(callback.data.split(':')[1])
     await callback.answer('')
-    await requests.insert_like(tg_id=callback.from_user.id, liked_id=disliked_id)
+    await requests.insert_like(tg_id=callback.from_user.id, liked_id=disliked_id, is_like=False)
+    await requests.set_watched(tg_id=disliked_id, liked_id=callback.from_user.id)
     await callback.message.edit_reply_markup(reply_markup=None)
 
 

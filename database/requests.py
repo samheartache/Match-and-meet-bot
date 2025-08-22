@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_, func, desc
+from sqlalchemy import select, or_, func, desc, update
 from sqlalchemy.orm import joinedload, aliased
 
 from database.models import User, Like
@@ -86,6 +86,7 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
             is_like=is_like
         )
 
+
         if await has_like(tg_id=tg_id, liked_id=liked_id):
             if is_like:
                 new_like.is_watched = True
@@ -107,6 +108,17 @@ async def insert_like(tg_id, liked_id, message=None, is_like=True):
         await session.commit()
 
         return is_mutual
+
+
+async def set_watched(tg_id, liked_id):
+    async with async_session() as session:
+        query = (
+            update(Like)
+            .where(Like.tg_id == tg_id, Like.liked_id == liked_id)
+            .values(is_watched=True)
+        )
+        await session.execute(query)
+        await session.commit()
 
 
 async def has_like(tg_id, liked_id):
