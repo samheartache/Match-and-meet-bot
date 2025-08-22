@@ -1,15 +1,24 @@
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import TelegramObject, CallbackQuery, Message
+from typing import Callable, Any, Awaitable
 
-from database.requests import select_user_profile
+from database.requests import is_banned
+from messages import BAN
 
 
 class BanMiddleware(BaseMiddleware):
-    async def __call__(self, handler, message: Message, data: dict):
-        tg_id = message.from_user.id
+    async def __call__(self,
+                handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+                event: TelegramObject,
+                data: dict) -> Any:
+        
+        tg_id = event.from_user.id
 
-        user_profile = await select_user_profile(tg_id=tg_id)
-        if user_profile.is_banned:
-            await message.answer('❗ Вы были забанены в боте.\nПохоже, что на вас было оставлено много жалоб.\nДля выяснения обстоятельств оброщайтесь в поддержку - "@поддержка"')
+        if await is_banned(tg_id=tg_id):
+            if isinstance(event, CallbackQuery):
+                await event.message.answer(BAN)
+                return
+            await event.answer(BAN)
             return
-        return await handler(message, data)
+        
+        return await handler(event, data)

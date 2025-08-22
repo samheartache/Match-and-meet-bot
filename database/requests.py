@@ -176,8 +176,14 @@ async def get_reports(tg_id):
         return user_reports or 0
 
 
-async def ban_user(tg_id):
+async def set_ban(tg_id, status):
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
-        user.is_banned = True
+        user.is_banned = status
         await session.commit()
+
+
+async def is_banned(tg_id):
+    async with async_session() as session:
+        status = await session.scalar(select(User.is_banned).where(User.tg_id == tg_id))
+        return status

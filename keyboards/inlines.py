@@ -27,3 +27,9 @@ ban  = lambda tg_id: InlineKeyboardMarkup(
         [InlineKeyboardButton(text='❌ Забанить', callback_data=f'ban_user:{tg_id}')]
     ]
 )
+
+unban  = lambda tg_id: InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text='✅ Разбанить', callback_data=f'unban_user:{tg_id}')]
+    ]
+)

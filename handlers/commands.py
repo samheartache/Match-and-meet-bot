@@ -12,8 +12,11 @@ import keyboards.replies as kb_r
 from keyboards.builders import choice_keyboard
 from database import requests
 from utils import display_like_template, userprofile_template, foundprofile_template
+from middlewares.check_ban import BanMiddleware
 
 router = Router()
+router.message.middleware(BanMiddleware())
+router.callback_query.middleware(BanMiddleware())
 
 
 @router.message(CommandStart())
