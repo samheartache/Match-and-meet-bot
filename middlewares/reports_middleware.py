@@ -35,5 +35,6 @@ class ReportMiddleware(BaseMiddleware):
                         caption=f'{reports_count} жалоб на [\{reported_profile.username}](tg://openmessage?user_id={tg_id}), id \- {tg_id}',
                         parse_mode='MarkdownV2',
                         reply_markup=ban(tg_id=tg_id))
-                
+                    
+        event.message.delete()
         return result

@@ -130,7 +130,7 @@ async def has_like(tg_id, liked_id):
 
 async def get_likes_count(tg_id):
     async with async_session() as session:
-        query = select(func.count()).where(Like.liked_id == tg_id, Like.is_mutual == False, Like.is_like == True)
+        query = select(func.count()).where(Like.liked_id == tg_id, Like.is_mutual == False, Like.is_like == True, Like.is_watched == False)
         result = await session.scalar(query)
         return result or 0
 
