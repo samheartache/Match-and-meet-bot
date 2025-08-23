@@ -199,3 +199,17 @@ async def is_banned(tg_id):
     async with async_session() as session:
         status = await session.scalar(select(User.is_banned).where(User.tg_id == tg_id))
         return status
+
+
+async def set_notif(tg_id, status=False):
+    async with async_session() as session:
+        query = update(User).where(User.tg_id == tg_id).values(notifications = status)
+        await session.execute(query)
+        await session.commit()
+
+
+async def get_notifs(tg_id):
+    async with async_session() as session:
+        query = select(User.notifications).where(User.tg_id == tg_id)
+        result = await session.scalar(query)
+        return result

@@ -5,8 +5,8 @@ register_button = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 watch_likes = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Посмотреть', callback_data='watch_likes'), InlineKeyboardButton(text='Позже', callback_data='watch_later')],
-    [InlineKeyboardButton(text='Не уведомлять о лайках', callback_data='notif_off')]
+    [InlineKeyboardButton(text='😍 Посмотреть', callback_data='watch_likes'), InlineKeyboardButton(text='🔜 Позже', callback_data='watch_later')],
+    [InlineKeyboardButton(text='🔕 Не уведомлять о лайках', callback_data='notif_off')]
 ])
 
 like_user = lambda tg_id: InlineKeyboardMarkup(

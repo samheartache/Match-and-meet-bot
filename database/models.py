@@ -23,6 +23,7 @@ class User(Base):
     photo: Mapped[str] = mapped_column(String(500))
     reports_count: Mapped[int] = mapped_column(default=0)
     is_banned: Mapped[bool] = mapped_column(default=False)
+    notifications: Mapped[bool] = mapped_column(default=True)
     time_created: Mapped[datetime.datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
     time_updated: Mapped[datetime.datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"),\
                                                             onupdate=datetime.datetime.utcnow)

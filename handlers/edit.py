@@ -6,7 +6,7 @@ import validators
 from states import Register, Edit, GlobalStates
 from keyboards.builders import choice_keyboard
 from database import requests
-from handlers.commands import send_myprofile
+from handlers.commands import send_myprofile, notif_off, notif_on
 
 router = Router()
 
@@ -34,6 +34,10 @@ async def profile_edit(message: Message, state: FSMContext):
     elif message.text == '📝 Заполнить анкету заново':
         await state.set_state(Register.sex)
         await message.answer(text='Введите ваш пол', reply_markup=choice_keyboard(['Мужской', 'Женский'], size=(2, 1)))
+    elif message.text == '🔕 Уведомления о лайках':
+        await notif_off(message=message)
+    elif message.text == '🔔 Уведомления о лайках':
+        await notif_on(message=message)
     elif message.text == 'Назад в меню':
         from handlers.commands import help
 

@@ -36,11 +36,10 @@ async def send_myprofile(message: Message, state: FSMContext, after_register=Fal
     await message.answer('Вот ваша анкета: ')
     user = await requests.select_user_profile(tg_id=message.from_user.id)
     if not after_register:
-        if user.description:
-            await message.answer_photo(
-            photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
-            description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
-            , reply_markup=kb_r.profile_keyboard)
+        await message.answer_photo(
+        photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
+        description=user.description, sex=user.sex, search_desire=user.search_desire, searched_by=user.searched_by)
+        , reply_markup=kb_r.profile_keyboard(notif_status=user.notifications))
     else:
         await message.answer_photo(
             photo=user.photo, caption=userprofile_template(username=user.username, age=user.age, city=user.city,\
@@ -75,3 +74,15 @@ async def watch_likes(message: Message, user_id=None):
                                             caption=display_like_template(tg_id=like.user.tg_id, username=like.user.username, age=like.user.age,\
                                             sex=like.user.sex, message=like.message, is_mutual=like.is_mutual, city=like.user.city,\
                                             description=like.user.description), reply_markup=kb_i.like_user(like.user.tg_id), parse_mode='MarkdownV2')
+
+
+@router.message(Command('notif_on'))
+async def notif_on(message: Message):
+    await requests.set_notif(tg_id=message.from_user.id, status=True)
+    await message.answer(text='🔔 Вы включили уведомления о лайках', reply_markup=kb_r.profile_keyboard(notif_status=True))
+
+
+@router.message(Command('notif_off'))
+async def notif_off(message: Message):
+    await requests.set_notif(tg_id=message.from_user.id, status=False)
+    await message.answer(text='🔕 Вы отключили уведомления о лайках.\n\nДля включения уведомлений напишите /notif_on', reply_markup=kb_r.profile_keyboard(notif_status=False))

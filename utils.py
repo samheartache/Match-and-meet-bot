@@ -8,6 +8,8 @@ BOT_COMMANDS = [
     BotCommand(command='likes', description='Кто меня оценил?'),
     BotCommand(command='contacts', description='Контакты бота'),
     BotCommand(command='deleteprofile', description='Удалить анкету'),
+    BotCommand(command='notif_on', description='Включить уведомления'),
+    BotCommand(command='notif_off', description='Отключить уведомления')
 ]
 
 SEX = {0: 'Женский', 1: 'Мужской'}
@@ -53,3 +55,9 @@ def display_like_template(tg_id, username, age, city, description, sex, tg_usern
     if message:
         result += f'\n\n💌: *{message}*'
     return result
+
+
+def get_notif_string(status):
+    if status:
+        return '🔕 Уведомления о лайках'
+    return '🔔 Уведомления о лайках'
