@@ -38,6 +38,9 @@ async def profile_edit(message: Message, state: FSMContext):
         await notif_off(message=message)
     elif message.text == '🔔 Уведомления о лайках':
         await notif_on(message=message)
+    elif message.text == '❌ Удалить анкету':
+        await message.answer(text='Вы уверены, что хотите удалить анкету?', reply_markup=choice_keyboard(['Да', 'Нет']))
+        await state.set_state(Edit.delete)
     elif message.text == 'Назад в меню':
         from handlers.commands import help
 
@@ -165,3 +168,14 @@ async def change_photo(message: Message, state: FSMContext):
     else:
         await message.answer('Отправьте фото корректно', reply_markup=choice_keyboard('Назад'))
         return
+
+
+@router.message(Edit.delete)
+async def delete_profile(message: Message, state: FSMContext):
+    if message.text == 'Да':
+        await requests.delete_user(tg_id=message.from_user.id)
+        await message.answer(text='Ваша анкета удалена.\n\nЧтобы зарегистрироваться снова напишите /start')
+    elif message.text == 'Нет':
+        await send_myprofile(message=message, state=state)
+    else:
+        await message.answer(text='Отправьте ответ правильно', reply_markup=choice_keyboard(['Да', 'Нет']))

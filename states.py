@@ -22,6 +22,7 @@ class Edit(StatesGroup):
     photo = State()
     city = State()
     reg_again = State()
+    delete = State()
 
 
 class GlobalStates(StatesGroup):

@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_, func, desc, update
+from sqlalchemy import select, or_, func, desc, update, delete
 from sqlalchemy.orm import joinedload, aliased
 
 from database.models import User, Like
@@ -213,3 +213,10 @@ async def get_notifs(tg_id):
         query = select(User.notifications).where(User.tg_id == tg_id)
         result = await session.scalar(query)
         return result
+
+
+async def delete_user(tg_id):
+    async with async_session() as session:
+        query = delete(User).where(User.tg_id == tg_id)
+        await session.execute(query)
+        await session.commit()

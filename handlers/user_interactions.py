@@ -6,8 +6,6 @@ from states import GlobalStates, SearchStates
 from handlers.commands import send_myprofile, find_profile, watch_likes, help
 from handlers.notifications import notify_like, notify_mutual_like
 from database import requests
-import keyboards.inlines as kb_i
-from utils import display_like_template
 from middlewares.check_ban import BanMiddleware
 
 
